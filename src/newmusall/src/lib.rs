@@ -53,3 +53,17 @@ fn get_contracts(contract_id: u64) -> Option<Contract> {
 fn list_contracts() -> Vec<Contract> {
     SERVICE.with(|service| service.borrow().list_contracts())
 }
+
+// #[query]
+// #[ic_cdk::export::candid::candid_method(query)]
+// fn get_open_contracts() -> Vec<Contract> {
+//     let accepted_proposals: Vec<Contract> = SERVICE.with(|service| service{
+//         service.borrow_mut()
+//             .contracts
+//             .values_mut()
+//             .filter(|proposal| proposal.state == ContractState::Accepted)
+//             .map(|proposal| { proposal.state = ContractState::Open; proposal.clone() } )
+//             .collect()
+//     });
+    
+// }
