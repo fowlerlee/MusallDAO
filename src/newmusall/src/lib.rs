@@ -57,13 +57,12 @@ fn list_contracts() -> Vec<Contract> {
 #[query]
 #[ic_cdk::export::candid::candid_method(query)]
 fn get_open_contracts() -> Vec<Contract> {
-    let accepted_contracts: Vec<Contract> = SERVICE.with(|service| {
+    SERVICE.with(|service| {
         service.borrow_mut()
             .contracts
             .values_mut()
             .filter(|contract| contract.state == ContractState::Succeeded)
             .map(|contract| { contract.state = ContractState::Open; contract.clone() } )
             .collect()
-    });
-    accepted_contracts
+    })
 }
