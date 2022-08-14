@@ -11,13 +11,12 @@ async fn heartbeat() {
 
 /// Execute all accepted proposals
 async fn get_open_accepted_contracts() -> Vec<Contract> {
-    let accepted_contracts: Vec<Contract> = SERVICE.with(|service| {
+    SERVICE.with(|service| {
         service.borrow_mut()
             .contracts
             .values_mut()
             .filter(|contract| contract.state == ContractState::Open)
             .map(|proposal| { proposal.state = ContractState::Succeeded; proposal.clone() } )
             .collect()
-    });
-    accepted_contracts
+    })
 }
