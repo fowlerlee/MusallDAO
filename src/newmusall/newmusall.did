@@ -1,3 +1,71 @@
-service : {
-    "greet": (text) -> (text) query;
+type MusallStableStorage = record {
+    accounts: vec Account;
+    contracts: vec Contracts;
+    system_params: SystemParams;
+};
+
+type Tokens = record {
+    amount_e8s: nat64;
+};
+
+type ContractState = variant {
+    // The proposal is open for purchase
+    Open;
+
+    // all the shares are sold
+    Closed;
+
+    // The contract meets requirements of platform
+    Succeeded;
+
+    // failed to meet standards for contracts
+    Failed: text;
+};
+
+type Contract = record {
+    id: nat64;
+    timestamp: nat64;
+    creator: Principal;
+    state: ContractState;
+    total_contract_cost: Tokens;
+    voters: vec principal;
+};
+
+type Account = record {
+    owner: principal;
+    tokens: Tokens;
+};
+
+type TransferArgs = record {
+    to: principal;
+    amount: Tokens;
+};
+
+type SystemParams = record {
+    transfer_fee: Tokens;
+    proposal_vote_threshold: Tokens;
+    proposal_submission_deposit: Tokens;
+};
+
+service : (BasicDaoStableStorage) -> {
+    // Get the current system params
+    get_system_params: () -> (SystemParams);
+
+    // Transfer tokens from the caller's account to another account
+    transfer: (TransferArgs) -> (TransferResult);
+
+    // Returns the amount of Tokens the caller owns
+    account_balance: () -> (Tokens) query;
+
+    // Lists all accounts
+    list_accounts: () -> (vec Account) query;
+
+    // Return the proposal with the given ID, if one exists
+    get_contracts: (nat64) -> (opt Contract);
+
+    // Return the list of all proposals
+    list_contracts: () -> (vec Contract) query;
+
+    //get open/Succeeded contracts
+    get_open_contracts: () -> (vec Contract) query;
 }
