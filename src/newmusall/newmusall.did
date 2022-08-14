@@ -1,6 +1,6 @@
 type MusallStableStorage = record {
     accounts: vec Account;
-    contracts: vec Contracts;
+    contracts: vec Contract;
     system_params: SystemParams;
 };
 
@@ -41,13 +41,18 @@ type TransferArgs = record {
     amount: Tokens;
 };
 
+type TransferResult = variant {
+    Ok;
+    Err: text;
+};
+
 type SystemParams = record {
     transfer_fee: Tokens;
     proposal_vote_threshold: Tokens;
     proposal_submission_deposit: Tokens;
 };
 
-service : (BasicDaoStableStorage) -> {
+service : (MusallStableStorage) -> {
     // Get the current system params
     get_system_params: () -> (SystemParams);
 
