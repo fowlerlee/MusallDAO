@@ -17,6 +17,7 @@ target/
 node_modules/
 dist/
 
+src/declarations/
 
 internet_identity.wasm
 internet_identity.did
