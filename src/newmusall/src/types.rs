@@ -45,6 +45,7 @@ pub struct Contract {
     pub timestamp: u64,
     pub creator: Principal,
     pub voters: Vec<Principal>,
+    pub status: ContractState,
     pub contract_name: String,
     pub contract_text: String,
 }
@@ -88,15 +89,13 @@ pub struct TransferArgs {
 //     Ok(String),
 // }
 
-#[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
+#[derive(Clone, Debug, CandidType, Serialize, Deserialize, PartialEq)]
 pub enum ContractState {
     // The proposal is open for voting
     Open,
-
     Closed,
     // The proposal has been successfully executed
     Succeeded,
-
     // A failure occurred while executing the proposal
     Failed(String),
 }

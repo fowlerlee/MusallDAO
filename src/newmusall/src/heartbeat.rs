@@ -15,8 +15,8 @@ async fn get_open_accepted_contracts() -> Vec<Contract> {
         service.borrow_mut()
             .contracts
             .values_mut()
-            .filter(|contract| contract.state == ContractState::Open)
-            .map(|proposal| { proposal.state = ContractState::Succeeded; proposal.clone() } )
+            .filter(|contract| contract.status == ContractState::Open)
+            .map(|contract| { contract.status = ContractState::Succeeded; contract.clone() } )
             .collect()
     })
 }

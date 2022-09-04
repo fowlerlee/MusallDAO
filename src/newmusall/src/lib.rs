@@ -3,13 +3,12 @@ mod types;
 mod service;
 mod env;
 // mod init;
-// mod heartbeat;
+mod heartbeat;
 
 use ic_cdk_macros::*;
 // use std::cell::RefCell;
 use crate::service::MusallService;
 use crate::types::*;
-
 
 use std::{cell::RefCell, vec};
 use std::collections::btree_map::BTreeMap;
@@ -17,6 +16,7 @@ use candid::Principal;
 // use crate::types::*;
 // use ic_cdk_macros::*;
 use ic_cdk::api::{caller as caller_api};
+use crate::env::CanisterEnvironment;
 
 type PrincipalName = String;
 
@@ -40,7 +40,14 @@ fn caller() -> Principal {
 }
 
 #[init]
-fn init() {}
+fn init() {
+    ic_cdk::setup();
+
+    let mut init_service = MusallService::default();
+    init_service.env = Box::new(CanisterEnvironment {});
+
+    // SERVICE.with(|service| *service.borrow_mut() = init_service);
+}
 
 #[ic_cdk_macros::query]
 fn get_number_of_contracts() -> usize {
@@ -67,6 +74,7 @@ fn add_contract(contract_name: String, contract_notes: String) {
                      id: (contract_id), 
                      timestamp: (ic_cdk::api::time()), 
                      creator: (caller()), 
+                     status: ContractState::Open,
                      voters: (vec![caller()]),
                      contract_name: contract_name,
                      contract_text: contract_notes,
@@ -83,13 +91,15 @@ mod tests {
         assert_eq!(get_number_of_contracts(), 0)
     }
 
-    // #[test]
-    // #[should_panic(expected = "assertion failed: users()")]
-    // fn test_add_contract_panics(){
-    //     CONTRACTS.with(|cons|{
-    //         cons.borrow_mut().insert(Principal::anonymous().to_string(),  vec![])
-    //     });
-    // }
+    #[test]
+    #[ignore]
+    #[should_panic(expected = "assertion failed: users()")]
+    fn test_add_contract_panics(){
+        CONTRACTS.with(|cons|{
+            cons.borrow_mut().insert(Principal::anonymous().to_string(),  vec![])
+        });
+    }
+
 
 }
 
