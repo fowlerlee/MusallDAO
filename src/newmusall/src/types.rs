@@ -88,18 +88,18 @@ pub struct TransferArgs {
 //     Ok(String),
 // }
 
-// #[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
-// pub enum ContractState {
-//     // The proposal is open for voting
-//     Open,
+#[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
+pub enum ContractState {
+    // The proposal is open for voting
+    Open,
 
-//     Closed,
-//     // The proposal has been successfully executed
-//     Succeeded,
+    Closed,
+    // The proposal has been successfully executed
+    Succeeded,
 
-//     // A failure occurred while executing the proposal
-//     Failed(String),
-// }
+    // A failure occurred while executing the proposal
+    Failed(String),
+}
 
 // #[derive(Clone, Debug, CandidType, Deserialize)]
 // pub struct Contract {
