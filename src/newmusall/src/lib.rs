@@ -1,79 +1,21 @@
 
-// mod types;
-// mod service;
-// mod env;
+mod types;
+mod service;
+mod env;
 // mod init;
 // mod heartbeat;
 
-// use ic_cdk_macros::*;
+use ic_cdk_macros::*;
 // use std::cell::RefCell;
-// use crate::service::MusallService;
-// use crate::types::*;
+use crate::service::MusallService;
+use crate::types::*;
 
-// thread_local! {
-//     static SERVICE: RefCell<MusallService> = RefCell::default();
-// }
-
-// #[query]
-// #[ic_cdk::export::candid::candid_method(query)]
-// fn get_system_params() -> SystemParams {
-//     SERVICE.with(|service| service.borrow().system_params.clone())
-// }
-
-// #[update]
-// #[ic_cdk::export::candid::candid_method]
-// fn transfer(args: TransferArgs) -> Result<(), String> {
-//     SERVICE.with(|service| service.borrow_mut().transfer(args))
-// }
-
-// #[query]
-// #[ic_cdk::export::candid::candid_method(query)]
-// fn account_balance() -> Tokens {
-//     SERVICE.with(|service| service.borrow().account_balance())
-// }
-
-// #[query]
-// #[ic_cdk::export::candid::candid_method(query)]
-// fn list_accounts() -> Vec<Account> {
-//     SERVICE.with(|service| service.borrow().list_accounts())
-// }
-
-// #[query]
-// #[ic_cdk::export::candid::candid_method(query)]
-// fn get_contracts(contract_id: u64) -> Option<Contract> {
-//     SERVICE.with(|service| service
-//         .borrow()
-//         .get_contracts(contract_id))
-// }
-
-// #[query]
-// #[ic_cdk::export::candid::candid_method(query)]
-// fn list_contracts() -> Vec<Contract> {
-//     SERVICE.with(|service| service
-//         .borrow()
-//         .list_contracts())
-// }
-
-// #[query]
-// #[ic_cdk::export::candid::candid_method(query)]
-// fn get_open_contracts() -> Vec<Contract> {
-//     SERVICE.with(|service| {
-//         service.borrow_mut()
-//             .contracts
-//             .values_mut()
-//             .filter(|contract| contract.state == ContractState::Succeeded)
-//             .map(|contract| { contract.state = ContractState::Open; contract.clone() } )
-//             .collect()
-//     })
-// }
-
-mod types;
 
 use std::{cell::RefCell, vec};
 use std::collections::btree_map::BTreeMap;
 use candid::Principal;
-use crate::types::*;
-use ic_cdk_macros::*;
+// use crate::types::*;
+// use ic_cdk_macros::*;
 use ic_cdk::api::{caller as caller_api};
 
 type PrincipalName = String;
@@ -86,6 +28,7 @@ fn greet(name: String) -> String {
 thread_local! {
     pub static NEXT_CONTRACT_ID: RefCell<u64> = RefCell::new(1);
     pub static CONTRACTS: RefCell<BTreeMap<PrincipalName, Vec<Contract>>> = RefCell::new(BTreeMap::new());
+    pub static SERVICE: RefCell<MusallService> = RefCell::default();
 }
 
 fn caller() -> Principal {
@@ -149,5 +92,61 @@ mod tests {
     // }
 
 }
+
+// #[query]
+// #[ic_cdk::export::candid::candid_method(query)]
+// fn get_system_params() -> SystemParams {
+//     SERVICE.with(|service| service.borrow().system_params.clone())
+// }
+
+// #[update]
+// #[ic_cdk::export::candid::candid_method]
+// fn transfer(args: TransferArgs) -> Result<(), String> {
+//     SERVICE.with(|service| service.borrow_mut().transfer(args))
+// }
+
+// #[query]
+// #[ic_cdk::export::candid::candid_method(query)]
+// fn account_balance() -> Tokens {
+//     SERVICE.with(|service| service.borrow().account_balance())
+// }
+
+// #[query]
+// #[ic_cdk::export::candid::candid_method(query)]
+// fn list_accounts() -> Vec<Account> {
+//     SERVICE.with(|service| service.borrow().list_accounts())
+// }
+
+// #[query]
+// #[ic_cdk::export::candid::candid_method(query)]
+// fn get_contracts(contract_id: u64) -> Option<Contract> {
+//     SERVICE.with(|service| service
+//         .borrow()
+//         .get_contracts(contract_id))
+// }
+
+// #[query]
+// #[ic_cdk::export::candid::candid_method(query)]
+// fn list_contracts() -> Vec<Contract> {
+//     SERVICE.with(|service| service
+//         .borrow()
+//         .list_contracts())
+// }
+
+// #[query]
+// #[ic_cdk::export::candid::candid_method(query)]
+// fn get_open_contracts() -> Vec<Contract> {
+//     SERVICE.with(|service| {
+//         service.borrow_mut()
+//             .contracts
+//             .values_mut()
+//             .filter(|contract| contract.state == ContractState::Succeeded)
+//             .map(|contract| { contract.state = ContractState::Open; contract.clone() } )
+//             .collect()
+//     })
+// }
+
+// mod types;
+
 
 
