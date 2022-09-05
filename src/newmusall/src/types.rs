@@ -26,9 +26,7 @@ pub struct Tokens {
 pub struct SystemParams {
     // The fee incurred by transferring tokens
     pub transfer_fee: Tokens,
-
     pub contract_unit: Tokens,
-
     pub contract_submission_deposit: Tokens,
 }
 

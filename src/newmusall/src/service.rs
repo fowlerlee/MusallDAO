@@ -1,7 +1,9 @@
+
 use crate::env::{EmptyEnvironment, Environment};
 use crate::types::*;
 use ic_cdk::export::Principal;
 use std::collections::HashMap;
+use crate::NEXT_CONTRACT_ID;
 
 // /// Implements the Musall DAO interface
 pub struct MusallService {
@@ -96,5 +98,31 @@ impl MusallService {
         /// Return the list of all proposals
         pub fn list_contracts(&self) -> Vec<Contract> {
             self.contracts.values().cloned().collect()
+        }
+
+        pub fn add_contracts(&mut self, contract_text: String, contract_name: String) -> Result<String, String>{
+            let contract_id = NEXT_CONTRACT_ID.with(|counter| {
+                let mut writer = counter.borrow_mut();
+                *writer += 1;
+                *writer
+            });
+
+            let contract = Contract {
+                id: contract_id,
+                timestamp: ic_cdk::api::time(),
+                creator: ic_cdk::caller(),
+                voters: vec![ic_cdk::caller()],
+                status: ContractState::Open,
+                contract_name: contract_name,
+                contract_text: contract_text,
+
+            };
+            if let Some(_x) = self.contracts.get(&contract_id) {
+                Err("a contract already exisits with this id".to_string())
+            } else {
+                self.contracts.insert(contract_id, contract);
+                Ok("Contract added to Musall".to_string())
+            }
+            
         }
 }
