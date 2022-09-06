@@ -13,5 +13,24 @@ type Contract = record {
 };
 
 type PrincipalName = text;
+type Tokens = nat;
+
+type TransferArgs {
+    to: principal;
+    amount: Tokens;
+};
+
+type ContractState = variant {
+    Open;
+    Closed;
+    Succeeded;
+    Failed: text;
+}
+
+type MusallStableStorage = record {
+    accounts: vec Account;
+    contracts: vec Contract;
+    system_params: SystemParams;
+};
 
 service : () -> anon_class_15_1
