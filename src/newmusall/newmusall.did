@@ -1,21 +1,29 @@
-type anon_class_15_1 = 
-service {
+type anon_class_15_1 = service {
     greet: (text) -> (text) query;
     get_number_of_users: () -> (nat) query;
-    add_contract: (text) -> ();
+    add_contract: (text) -> (LResult);
+    transfer: (TransferArgs) -> (LResult);
 };
 
 type Contract = record {
     id: nat;
     timestamp: nat;
     creator: principal;
-    voters: vec PrincipalName;
+    voters: vec principal;
+    status: ContractState;
+    contract_name: text;
+    contract_text: text;
 };
 
 type PrincipalName = text;
 type Tokens = nat;
 
-type TransferArgs {
+type Account = record {
+    owner: principal;
+    tokens: Tokens;
+};
+
+type TransferArgs = record {
     to: principal;
     amount: Tokens;
 };
@@ -25,7 +33,23 @@ type ContractState = variant {
     Closed;
     Succeeded;
     Failed: text;
-}
+};
+
+type LResult = variant {
+    Err: text;
+    Ok: text;
+};
+
+type TransferResult = variant {
+    Err: text;
+    Ok: text;
+};
+
+type SystemParams = record {
+    transfer_fee: Tokens;
+    contract_unit: Tokens;
+    contract_submission_deposit: Tokens;
+};
 
 type MusallStableStorage = record {
     accounts: vec Account;

@@ -55,31 +55,48 @@ fn get_number_of_contracts() -> usize {
 }
 
 #[update(name = "add_contract")]
-fn add_contract(contract_name: String, contract_notes: String) {
+fn add_contract(contract_name: String, contract_notes: String) -> LResult<String, String> {
     let user: Principal= caller();
-    let user_str: String = user.to_string();
+    let _user_str: String = user.to_string();
     let contract_id = NEXT_CONTRACT_ID.with(|counter| {
         let mut writer = counter.borrow_mut();
         *writer += 1;
         *writer
     });
+    if user == Principal::anonymous() {
+        return LResult::Err("User is anonymous and needs to validate".to_string());
+    }
 
-    CONTRACTS.with(|cons| {
-        let mut writer = cons.borrow_mut();
-        let user_notes = writer.get_mut(&user_str)
-            .expect(&format!("contract not present for user {} on platform", user_str)[..]);
+    // CONTRACTS.with(|cons| {
+    //     let mut writer = cons.borrow_mut();
+    //     let user_notes = writer.get_mut(&user_str)
+    //         .expect(&format!("contract not present for user {} on platform", user_str)[..]);
     
-            user_notes.push(
-                Contract {
-                     id: (contract_id), 
-                     timestamp: (ic_cdk::api::time()), 
-                     creator: (caller()), 
-                     status: ContractState::Open,
-                     voters: (vec![caller()]),
-                     contract_name: contract_name,
-                     contract_text: contract_notes,
-                    });
-        });
+    //         user_notes.push(
+    //             Contract {
+    //                  id: (contract_id), 
+    //                  timestamp: (ic_cdk::api::time()), 
+    //                  creator: (caller()), 
+    //                  status: ContractState::Open,
+    //                  voters: (vec![caller()]),
+    //                  contract_name: contract_name,
+    //                  contract_text: contract_notes,
+    //                 });
+    //     });
+    SERVICE.with(|serv| {
+        let _contracts = serv
+            .borrow_mut()
+            .contracts
+            .insert(contract_id, Contract { 
+                id: (contract_id),
+                 timestamp: (ic_cdk::api::time()), 
+                 creator: (user), voters: vec![(caller())], 
+                 status: (ContractState::Open), 
+                 contract_name: (contract_name), 
+                 contract_text: (contract_notes)}
+                );
+    });
+    LResult::Ok("Contract created and added to Musall".to_string())
 }
 
 #[cfg(test)]

@@ -36,7 +36,6 @@ pub struct Account {
     pub tokens: Tokens,
 }
 
-
 #[derive(Clone, Debug, CandidType, Serialize, Deserialize)]
 pub struct Contract {
     pub id: u64,
@@ -81,11 +80,17 @@ pub struct TransferArgs {
     pub amount: Tokens,
 }
 
-// #[derive(Clone, CandidType, Serialize, Deserialize)]
-// pub enum Result {  
-//     Err(String),
-//     Ok(String),
-// }
+#[derive(Clone, Debug, CandidType, Serialize, Deserialize, PartialEq)]
+pub enum LResult <E, T>{  
+    Err(E),
+    Ok(T),
+}
+
+#[derive(Clone, Debug, CandidType, Serialize, Deserialize, PartialEq)]
+pub enum TransferResult <E, T> {  
+    Err(E),
+    Ok(T),
+}
 
 #[derive(Clone, Debug, CandidType, Serialize, Deserialize, PartialEq)]
 pub enum ContractState {
@@ -98,20 +103,5 @@ pub enum ContractState {
     Failed(String),
 }
 
-// #[derive(Clone, Debug, CandidType, Deserialize)]
-// pub struct Contract {
-//     pub id: u64,
-//     pub timestamp: u64,
-//     pub creator: Principal,
-//     pub state: ContractState,
-//     pub total_contract_cost: Tokens,
-//     //pub votes_no: Tokens,
-//     pub voters: Vec<Principal>,
-// }
 
-// #[derive(Clone, Debug, CandidType, Deserialize)]
-// pub struct Account {
-//     pub owner: Principal,
-//     pub tokens: Tokens,
-// }
 

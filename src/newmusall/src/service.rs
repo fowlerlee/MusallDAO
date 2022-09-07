@@ -53,12 +53,12 @@ impl From<MusallStableStorage> for MusallService {
 
 impl MusallService {
 
-    pub fn transfer(&mut self, transfer: TransferArgs) -> Result<(), String> {
+    pub fn transfer(&mut self, transfer: TransferArgs) -> LResult<String, String> {
         let caller = self.env.caller();
 
         if let Some(account) = self.accounts.get_mut(&caller) {
             if account.clone() < transfer.amount {
-                return Err(format!(
+                return LResult::Err(format!(
                     "Caller's account has insufficient funds to transfer {:?}",
                     transfer.amount
                 ));
@@ -68,10 +68,9 @@ impl MusallService {
                 *to_account += transfer.amount;
             }
         } else {
-            return Err("Caller needs an account to transfer funds".to_string());
+            return LResult::Err("Caller needs an account to transfer funds".to_string());
         }
-
-        Ok(())
+        LResult::Ok(format!("Transfer for user {:?} has succeeded", caller))
     }    
 
     pub fn account_balance(&self) -> Tokens {
@@ -100,7 +99,7 @@ impl MusallService {
             self.contracts.values().cloned().collect()
         }
 
-        pub fn add_contracts(&mut self, contract_text: String, contract_name: String) -> Result<String, String>{
+        pub fn add_contracts(&mut self, contract_text: String, contract_name: String) -> LResult<String, String>{
             let contract_id = NEXT_CONTRACT_ID.with(|counter| {
                 let mut writer = counter.borrow_mut();
                 *writer += 1;
@@ -118,10 +117,10 @@ impl MusallService {
 
             };
             if let Some(_x) = self.contracts.get(&contract_id) {
-                Err("a contract already exisits with this id".to_string())
+                LResult::Err("a contract already exisits with this id".to_string())
             } else {
                 self.contracts.insert(contract_id, contract);
-                Ok("Contract added to Musall".to_string())
+                LResult::Ok("Contract added to Musall".to_string())
             }
             
         }
