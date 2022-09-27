@@ -12,7 +12,7 @@ use crate::types::*;
 
 use candid::Principal;
 use std::collections::btree_map::BTreeMap;
-use std::{cell::RefCell, vec};
+use std::{cell::RefCell, vec, rc::Rc};
 // use crate::types::*;
 // use ic_cdk_macros::*;
 // use crate::env::CanisterEnvironment;
@@ -28,6 +28,7 @@ fn greet(name: String) -> String {
 thread_local! {
     pub static NEXT_CONTRACT_ID: RefCell<u64> = RefCell::new(1);
     pub static CONTRACTS: RefCell<BTreeMap<PrincipalName, Contract>> = RefCell::new(BTreeMap::new());
+    // pub static SERVICE: RefCell<MusallService> = RefCell::new(MusallService::default());
     pub static SERVICE: RefCell<MusallService> = RefCell::default();
 }
 
@@ -77,6 +78,12 @@ fn get_number_of_contracts() -> usize {
 //         *contract
       
 // }
+
+#[update(name = "add_account")]
+fn add_account(acc: Account){
+    let accounts = SERVICE.with(|a|{ a.clone(); });
+        
+}
 
 #[update(name = "add_contract")]
 fn add_contract(contract_name: String, contract_notes: String) -> LResult<String, String> {
@@ -137,7 +144,7 @@ mod tests {
     #[ignore]
     fn test_contracts_add() {
         assert_eq!(
-            add_contract("lee".to_string(), "math".to_string()),
+            add_contract(String::from("lleeee"), String::from("thhthte")),
             LResult::Ok("Contract created and added to Musall".to_string())
         )
     }

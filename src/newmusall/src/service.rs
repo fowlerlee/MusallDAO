@@ -1,6 +1,7 @@
 
 use crate::env::{EmptyEnvironment, Environment};
 use crate::types::*;
+use candid::types::ic_types::principal;
 use ic_cdk::export::Principal;
 use std::collections::HashMap;
 use crate::NEXT_CONTRACT_ID;
@@ -97,6 +98,12 @@ impl MusallService {
         /// Return the list of all proposals
         pub fn list_contracts(&self) -> Vec<Contract> {
             self.contracts.values().cloned().collect()
+        } 
+
+        pub fn add_account(&self, id: Principal, tokens: Tokens) {
+            self.accounts
+            .clone()
+            .insert(id, tokens);
         }
 
         pub fn add_contracts(&mut self, contract_text: String, contract_name: String) -> LResult<String, String>{
@@ -125,3 +132,18 @@ impl MusallService {
             
         }
 }
+
+
+// #[cfg(test)]
+// mod tests {
+//     use crate::caller;
+
+//     use super::*;
+
+//     #[test]
+//     #[ignore]
+//     fn test_contracts_not_zero() {
+//         Tokens:
+//         assert_eq!(MusallService::add_account(&self, caller(), tokens));
+//     }
+// }
