@@ -1,8 +1,8 @@
 mod env;
+mod heartbeat;
+mod init;
 mod service;
 mod types;
-mod init;
-mod heartbeat;
 
 use ic_cdk_macros::*;
 // use std::cell::RefCell;
@@ -12,7 +12,7 @@ use crate::types::*;
 
 use candid::Principal;
 use std::collections::btree_map::BTreeMap;
-use std::{cell::RefCell, vec, rc::Rc};
+use std::{cell::RefCell, vec};
 // use crate::types::*;
 // use ic_cdk_macros::*;
 // use crate::env::CanisterEnvironment;
@@ -28,8 +28,8 @@ fn greet(name: String) -> String {
 thread_local! {
     pub static NEXT_CONTRACT_ID: RefCell<u64> = RefCell::new(1);
     pub static CONTRACTS: RefCell<BTreeMap<PrincipalName, Contract>> = RefCell::new(BTreeMap::new());
-    // pub static SERVICE: RefCell<MusallService> = RefCell::new(MusallService::default());
-    pub static SERVICE: RefCell<MusallService> = RefCell::default();
+    pub static SERVICE: RefCell<MusallService> = RefCell::new(MusallService::default());
+    // pub static SERVICE: RefCell<MusallService> = RefCell::default();
 }
 
 fn caller() -> Principal {
@@ -61,7 +61,6 @@ fn get_number_of_contracts() -> usize {
 //         let values = cons.get_mut();})
 // }
 
-
 // #[query]
 // #[ic_cdk::export::candid::candid_method(query)]
 // fn get_contract(id: String) -> Option<Contract> {
@@ -76,13 +75,35 @@ fn get_number_of_contracts() -> usize {
 //         .borrow()
 //         .get_key_value(&user)});
 //         *contract
-      
+
 // }
 
 #[update(name = "add_account")]
-fn add_account(acc: Account){
-    let accounts = SERVICE.with(|a|{ a.clone(); });
-        
+fn add_account(tokens: Tokens) {
+    let user = caller();
+    let account_exists = SERVICE.with(|acc| acc.borrow().accounts.contains_key(&user));
+    if account_exists {
+        SERVICE.with(|a| {
+            a.borrow_mut().accounts.insert(user, tokens);
+        });
+    }
+}
+
+#[update(name = "delete_account")]
+fn delete_account(principal: Principal) {
+    let user = caller();
+    if user != principal {
+        return;
+    }
+    SERVICE.with(|acc| {
+        acc.borrow_mut()
+            .accounts
+            .remove_entry(&user)
+            .expect(&format!(
+                "deleted user account with principal id: {} ",
+                principal
+            ))
+    });
 }
 
 #[update(name = "add_contract")]
@@ -109,9 +130,9 @@ fn add_contract(contract_name: String, contract_notes: String) -> LResult<String
                 voters: (vec![caller()]),
                 contract_name: contract_name.clone(),
                 contract_text: contract_notes.clone(),
-           },
+            },
         );
-        });
+    });
 
     SERVICE.with(|serv| {
         let _contracts = serv.borrow_mut().contracts.insert(
@@ -156,14 +177,14 @@ mod tests {
         // CONTRACTS.with(|cons| {
         //     cons.borrow_mut()
         //         .insert(
-        //             Principal::anonymous().to_string(), 
-        //             Contract { 
-        //                 id: (1u64), 
-        //                 timestamp: (ic_cdk::api::time()), 
-        //                 creator: (Principal), 
-        //                 voters: (), 
-        //                 status: (), 
-        //                 contract_name: (), 
+        //             Principal::anonymous().to_string(),
+        //             Contract {
+        //                 id: (1u64),
+        //                 timestamp: (ic_cdk::api::time()),
+        //                 creator: (Principal),
+        //                 voters: (),
+        //                 status: (),
+        //                 contract_name: (),
         //                 contract_text: () })
         // });
     }

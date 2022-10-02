@@ -103,5 +103,23 @@ pub enum ContractState {
     Failed(String),
 }
 
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub enum Vote {
+    Yes,
+    No,
+}
+
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub struct VoteArgs {
+    pub proposal_id: u64,
+    pub vote: Vote,
+}
+
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub struct UpdateSystemParamsPayload  {
+    pub transfer_fee: Option<Tokens>,
+    pub proposal_vote_threshold: Option<Tokens>,
+    pub proposal_submission_deposit: Option<Tokens>,
+}
 
 
