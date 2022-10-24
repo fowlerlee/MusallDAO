@@ -106,6 +106,20 @@ fn delete_account(principal: Principal) {
     });
 }
 
+#[update(name = "update_contract_state")]
+fn update_contract_state(contract_id: u64, new_state: ContractState){
+    let _old_contract = SERVICE.with(|service|{
+        service
+        .borrow_mut()
+        .contracts
+        .get_key_value(&contract_id)
+       
+    });
+
+    // let present = SERVICE.with(|c|{ c.borrow_mut()
+    //         .contracts.contains_key(&contract_id)});
+}
+
 #[update(name = "add_contract")]
 fn add_contract(contract_name: String, contract_notes: String) -> LResult<String, String> {
     let user: Principal = caller();
