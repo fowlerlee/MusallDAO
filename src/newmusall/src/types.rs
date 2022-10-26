@@ -1,14 +1,6 @@
-// use ic_cdk::export::{
-//     candid::{CandidType, Deserialize},
-//     Principal,
-// };
 use std::ops::{Add, AddAssign, SubAssign, Mul};
-
 use ic_cdk::export::{candid::{CandidType}, Principal};
-// use ic_cdk_macros::*;
 use serde::{Deserialize, Serialize};
-
-// use crate::PrincipalName;
 
 #[derive(Clone, Debug, Default, CandidType, Deserialize)]
 pub struct MusallStableStorage {
@@ -122,4 +114,12 @@ pub struct UpdateSystemParamsPayload  {
     pub proposal_submission_deposit: Option<Tokens>,
 }
 
+
+// pub type DepositReceipt = Result<Nat, DepositErr>;
+
+// #[derive(CandidType)]
+// pub enum DepositErr {
+//     BalanceLow,
+//     TransferFailure,
+// }
 

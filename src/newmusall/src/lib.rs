@@ -5,18 +5,16 @@ mod service;
 mod types;
 
 use ic_cdk_macros::*;
-// use std::cell::RefCell;
 use crate::service::MusallService;
 use crate::types::*;
-// use crate::init::*;
-
-use candid::Principal;
 use std::collections::btree_map::BTreeMap;
 use std::{cell::RefCell, vec};
-// use crate::types::*;
-// use ic_cdk_macros::*;
-// use crate::env::CanisterEnvironment;
 use ic_cdk::api::caller as caller_api;
+
+use ic_cdk::export::{
+    candid::{CandidType, Deserialize},
+    Principal,
+};
 
 type PrincipalName = String;
 
@@ -78,6 +76,28 @@ fn get_number_of_contracts() -> usize {
 
 // }
 
+// #[update]
+// #[candid_method(update)]
+// pub async fn deposit(token_canister_id: Principal) -> DepositReceipt {
+//     let caller = caller();
+//     let ledger_canister_id = STATE
+//         .with(|s| s.borrow().ledger)
+//         .unwrap_or(MAINNET_LEDGER_CANISTER_ID);
+
+//     let amount = if token_canister_id == ledger_canister_id {
+//         deposit_icp(caller).await?
+//     } else {
+//         deposit_token(caller, token_canister_id).await?
+//     };
+//     STATE.with(|s| {
+//         s.borrow_mut()
+//             .exchange
+//             .balances
+//             .add_balance(&caller, &token_canister_id, amount.to_owned())
+//     });
+//     DepositReceipt::Ok(amount)
+// }
+
 #[update(name = "add_account")]
 fn add_account(tokens: Tokens) {
     let user = caller();
@@ -89,22 +109,22 @@ fn add_account(tokens: Tokens) {
     }
 }
 
-#[update(name = "delete_account")]
-fn delete_account(principal: Principal) {
-    let user = caller();
-    if user != principal {
-        return;
-    }
-    SERVICE.with(|acc| {
-        acc.borrow_mut()
-            .accounts
-            .remove_entry(&user)
-            .expect(&format!(
-                "deleted user account with principal id: {} ",
-                principal
-            ))
-    });
-}
+// #[update(name = "delete_account")]
+// fn delete_account(principal: Principal) {
+//     let user = caller();
+//     if user != principal {
+//         return;
+//     }
+//     SERVICE.with(|acc| {
+//         acc.borrow_mut()
+//             .accounts
+//             .remove_entry(&user)
+//             .expect(&format!(
+//                 "deleted user account with principal id: {} ",
+//                 principal
+//             ))
+//     });
+// }
 
 /*
 #[update(name = "update_contract_state")]
@@ -172,9 +192,9 @@ mod tests {
     use super::*;
 
     #[test]
-    #[ignore]
     fn test_contracts_not_zero() {
-        assert_eq!(get_number_of_contracts(), 0)
+        add_contract("contract_name".to_string(), "contract_notes".to_string());
+        assert_eq!(get_number_of_contracts(), 1)
     }
 
     #[test]
