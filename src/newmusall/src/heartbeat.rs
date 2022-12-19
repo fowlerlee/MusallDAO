@@ -34,6 +34,15 @@ async fn pay_valid_contracts(contracts : Vec<Contract>) {
 
 async fn make_royalty_payment_to_creator() {
     let principal = caller();
+    SERVICE.with(|s| {
+        if let Some(_user_tokens) = s.borrow_mut().accounts.get(&principal){
+            // s.borrow_mut().accounts
+        } else {
+         
+        }
+
+    
+    } )
 
 
 }
